@@ -13,42 +13,48 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText ip;
-    EditText port;
-    EditText portText;
-    Button connectButton;
-    TextView showIPtextId;
-    String showIPaddress;
-    String TAG = "MAIN";
+    private EditText ipReceiver;
+    private EditText portReceiver;
+    private EditText portSender;
+    private Button connectButton;
+    private TextView ipSender;
+    private String senderIP;
+    private String TAG = "MAIN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        portText = findViewById(R.id.myPortEditText);
-        ip = findViewById(R.id.ipEditText);
-        port = findViewById(R.id.portEditText);
+        portSender = findViewById(R.id.portSender);
+        portReceiver = findViewById(R.id.portReceiver);
+        ipSender = findViewById(R.id.ipSender);
+        ipReceiver = findViewById(R.id.ipReceiver);
         connectButton = findViewById(R.id.connectButton);
-        showIPtextId = findViewById(R.id.showIPtextId);
 
-        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        showIPaddress = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-        showIPtextId.setText(showIPaddress);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        senderIP = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+        ipSender.setText(senderIP);
 
         connectButton.setOnClickListener(view -> {
+
             String info = getInfo();
-            Intent intent = new Intent(MainActivity.this, chatClient.class);
-            intent.putExtra("ip&port", info);
+            Intent intent = new Intent(MainActivity.this, ClientChat.class);
+            intent.putExtra("ip & port", info);
             startActivity(intent);
             finish();
         });
-
     }
 
     String getInfo() {
-        String info = this.ip.getText().toString()+" "+this.port.getText().toString()+" "+this.portText.getText().toString();
-        Log.i(TAG, "info => "+info);
+
+        String info = this.ipReceiver.getText().toString() + " " +
+                    this.portReceiver.getText().toString() + " " +
+                    this.portSender.getText().toString();
+
+        Log.i(TAG, "info => " + info);
+
         return info;
     }
 }

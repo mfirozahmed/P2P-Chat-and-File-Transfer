@@ -33,7 +33,7 @@
             android:paddingStart="15dp"
             />
         <TextView
-            android:id="@+id/showIPtextId"
+            android:id="@+id/ipSender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
@@ -50,14 +50,14 @@
             android:id="@+id/textinpOwnIP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Your port No."
+            android:hint="Your Port No."
             android:textColorHint="@color/colorPrimaryLight"
             android:theme="@style/TextLabel"
             app:layout_constraintBottom_toTopOf="@id/textinpOwnPort"
-            app:layout_constraintTop_toBottomOf="@id/showIPtextId">
+            app:layout_constraintTop_toBottomOf="@id/ipSender">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/myPortEditText"
+                android:id="@+id/portSender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -79,8 +79,9 @@
             android:theme="@style/TextLabel"
             app:layout_constraintBottom_toTopOf="@id/textinpIp"
             app:layout_constraintTop_toBottomOf="@id/textinpOwnIP">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ipEditText"
+                android:id="@+id/ipReceiver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -98,7 +99,7 @@
             android:id="@+id/textinpIp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Receiver's port No."
+            android:hint="Receiver's Port No."
             android:textColorHint="@color/colorPrimaryLight"
             android:theme="@style/TextLabel"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -106,7 +107,7 @@
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/portEditText"
+                android:id="@+id/portReceiver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
