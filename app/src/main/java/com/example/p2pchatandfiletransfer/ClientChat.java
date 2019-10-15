@@ -95,8 +95,8 @@ public class ClientChat extends AppCompatActivity {
             userName = individualInfo[3];
         }
 
-        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        myIPAddress = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        myIPAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
 
         getSupportActionBar().setTitle("P2P Chat and File Transfer");
 
@@ -140,7 +140,7 @@ public class ClientChat extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        // Handle change background
         switch (item.getItemId()) {
             case R.id.action_settings: {
                 final Context context = ClientChat.this;

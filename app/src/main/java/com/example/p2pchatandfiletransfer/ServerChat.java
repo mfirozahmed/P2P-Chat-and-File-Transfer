@@ -59,8 +59,6 @@ public class ServerChat extends Thread {
             textView.setText("Server Socket Started at IP: " + myIPAddress + " and Port: " + myPort);
             textView.setBackgroundColor(Color.parseColor("#0a7e07"));
 
-            System.out.println(TAG + "started");
-
             while (!Thread.interrupted()) {
 
                 Socket connectSocket = mySocket.accept();

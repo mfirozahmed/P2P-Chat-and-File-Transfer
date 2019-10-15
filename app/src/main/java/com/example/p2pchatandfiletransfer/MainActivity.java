@@ -41,13 +41,17 @@ public class MainActivity extends AppCompatActivity {
 
         connectButton.setOnClickListener(view -> {
 
-            String info = getInfo();
-            Intent intent = new Intent(MainActivity.this, ClientChat.class);
-            intent.putExtra("ip & port", info);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
+            boolean storagePermission = StoragePermission.checkPermission(MainActivity.this);
+
+            if (storagePermission) {
+                String info = getInfo();
+                Intent intent = new Intent(MainActivity.this, ClientChat.class);
+                intent.putExtra("ip & port", info);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+            }
         });
     }
 
