@@ -53,7 +53,8 @@ Developed By :
 <br>
 
   Though both of us tried to make a good application for the users using socket programming, we know we lack a lot of things. 
-  But it is a user-friendly application and too easy to use but hard to understand without any knowledge of socket programming.
+  But it is a user-friendly application and too easy to use but hard to understand without any knowledge of socket programming 
+  😜
 
 <br>
 
