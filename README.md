@@ -53,10 +53,12 @@
 1. We have done all the basic features - setting receiver's ip address and port no of both, showing the exchanged messages, 
    sending .txt file, saving the chat, changing background of both user at the same time done by any user.
  
-2. We can send any type of file of any size. But the larger the file, the more time it takes.
+2. We can send any type of file (<b>images, pdf, songs</b>) of any size. But the larger the file, the more time it takes.
 
 3. The application asks permission for storage automatically. So the user don't have to waste time to give permission manually.
    We have used a pop-up confirmation for the permission.
+
+4. User can send any characters (including Bangla characters) and emojis.
 
 
 <br>
