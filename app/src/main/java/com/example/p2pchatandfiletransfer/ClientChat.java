@@ -2,6 +2,8 @@ package com.example.p2pchatandfiletransfer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -14,12 +16,19 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -46,6 +55,7 @@ public class ClientChat extends AppCompatActivity {
     private Handler handler = new Handler();
     private String myIPAddress = "";
     private String receiverIPAddress = "";
+    private String userName = "";
     private String TAG = "CLIENT ACTIVITY";
     private ListView messageList;
     private ArrayList<Message> messageArray;
@@ -65,6 +75,9 @@ public class ClientChat extends AppCompatActivity {
         sendMessage = findViewById(R.id.sendMessage); // message button
         sendFile = findViewById(R.id.sendFile); // file button
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         messageArray = new ArrayList<>();
         messageAdapter = new ChatAdapter(this, messageArray);
         messageList.setAdapter(messageAdapter);
@@ -79,10 +92,13 @@ public class ClientChat extends AppCompatActivity {
             receiverIPAddress = individualInfo[0];
             receiverPort = Integer.parseInt(individualInfo[1]);
             myPort = Integer.parseInt(individualInfo[2]);
+            userName = individualInfo[3];
         }
 
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         myIPAddress = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+
+        getSupportActionBar().setTitle("P2P Chat and File Transfer");
 
         if (!receiverIPAddress.equals("")) {
 
@@ -115,12 +131,45 @@ public class ClientChat extends AppCompatActivity {
         });
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
-    }*/
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings: {
+                final Context context = ClientChat.this;
+                ColorPickerDialogBuilder
+                        .with(context)
+                        .setTitle("Choose a color")
+                        .initialColor(0xffffffff)
+                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                        .density(12)
+                        .setOnColorSelectedListener(selectedColor -> {
+                        })
+                        .setPositiveButton("Ok", (dialog, selectedColor, allColors) -> {
+
+                            changeBackgroundColor(selectedColor);
+
+                            User user = new User("2:" + Integer.toHexString(selectedColor));
+                            user.execute();
+
+                            Log.d("ColorPicker", "onColorChanged: 0x" + Integer.toHexString(selectedColor));
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> {
+                        })
+                        .build()
+                        .show();
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -147,11 +196,11 @@ public class ClientChat extends AppCompatActivity {
         }
     }
 
-    /*public final void changeBackgroundColor(Integer selectedColor) {
+    public final void changeBackgroundColor(Integer selectedColor) {
         LayerDrawable layerDrawable = (LayerDrawable) messageList.getBackground();
         GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.shapeColor);
         gradientDrawable.setColor(selectedColor);
-    }*/
+    }
 
     @SuppressLint("StaticFieldLeak")
     public class User extends AsyncTask<Void, Void, String> {

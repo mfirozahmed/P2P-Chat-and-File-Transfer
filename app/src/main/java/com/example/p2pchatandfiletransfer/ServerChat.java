@@ -57,7 +57,7 @@ public class ServerChat extends Thread {
             TextView textView;
             textView = activity.findViewById(R.id.textView);
             textView.setText("Server Socket Started at IP: " + myIPAddress + " and Port: " + myPort);
-            textView.setBackgroundColor(Color.parseColor("#39FF14"));
+            textView.setBackgroundColor(Color.parseColor("#0a7e07"));
 
             System.out.println(TAG + "started");
 
@@ -107,13 +107,14 @@ public class ServerChat extends Thread {
                 result = stringBuilder.toString();
 
                 File path = context.getObbDir();
-                Log.i(TAG,"FilesDir =>" + path+ "\n");
+                Log.i(TAG,"FilesDir =>" + path + "\n");
                 String fileName =  new SimpleDateFormat("yyyyMMdd").format(new Date()) +"-" + receiverIPAddress + ".txt";
-                File file = new File(path,fileName);
+                File file = new File(path, fileName);
 
                 try {
+
                     FileOutputStream fileOutputStream = new FileOutputStream(file,true);
-                    String history = "server: " +result+"\n";
+                    String history = "server: " + result + "\n";
                     fileOutputStream.write(history.getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();

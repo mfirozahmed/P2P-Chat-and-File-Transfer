@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText ipReceiver;
     private EditText portReceiver;
     private EditText portSender;
+    private EditText userName;
     private Button connectButton;
     private TextView ipSender;
     private String senderIP;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         portReceiver = findViewById(R.id.portReceiver);
         ipSender = findViewById(R.id.ipSender);
         ipReceiver = findViewById(R.id.ipReceiver);
+        userName = findViewById(R.id.userName);
         connectButton = findViewById(R.id.connectButton);
 
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -53,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
         String info = this.ipReceiver.getText().toString() + " " +
                     this.portReceiver.getText().toString() + " " +
-                    this.portSender.getText().toString();
+                    this.portSender.getText().toString() + " " +
+                    this.userName.getText().toString();
 
         Log.i(TAG, "info => " + info);
 

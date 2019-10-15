@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Status"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
         android:id="@+id/messageList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/background_main"
+        android:background="@drawable/background"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -55,6 +55,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageList">
 
+        <ImageButton
+            android:id="@+id/sendFile"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_attach_file_black_24dp"
+            android:paddingRight="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/chatBoxMessage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <EditText
             android:id="@+id/chatBoxMessage"
             android:layout_width="288dp"
@@ -64,20 +76,8 @@
             android:maxLines="6"
             android:paddingLeft="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/sendFile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/sendFile"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center"
-            android:paddingRight="5dp"
-            android:background="@drawable/ic_attach_file_black_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/sendMessage"
-            app:layout_constraintStart_toEndOf="@id/chatBoxMessage"
+            app:layout_constraintStart_toStartOf="@id/sendFile"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
@@ -89,7 +89,7 @@
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/sendFile"
+            app:layout_constraintStart_toEndOf="@id/chatBoxMessage"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

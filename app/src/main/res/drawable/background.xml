@@ -3,7 +3,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/back_main"></bitmap>
+            android:src="@drawable/back_main"/>
 
     </item>
 
