@@ -15,17 +15,17 @@ public class ChatAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View converView, ViewGroup parent) {
+    public View getView(int position, View conversionView, ViewGroup parent) {
 
-        if (converView == null) {
-            converView = LayoutInflater.from(getContext()).inflate(R.layout.messagelist, parent, false);
+        if (conversionView == null) {
+            conversionView = LayoutInflater.from(getContext()).inflate(R.layout.messagelist, parent, false);
         }
 
         Message currentMessage = (Message) getItem(position);
         assert currentMessage != null;
 
-        TextView sentMessage = converView.findViewById(R.id.list_sent);
-        TextView receivedMessage = converView.findViewById(R.id.list_received);
+        TextView sentMessage = conversionView.findViewById(R.id.list_sent);
+        TextView receivedMessage = conversionView.findViewById(R.id.list_received);
 
         sentMessage.setText("");
         sentMessage.setVisibility(View.GONE);
@@ -41,6 +41,6 @@ public class ChatAdapter extends ArrayAdapter {
             receivedMessage.setText(message);
             receivedMessage.setVisibility(View.VISIBLE);
         }
-        return converView;
+        return conversionView;
     }
 }

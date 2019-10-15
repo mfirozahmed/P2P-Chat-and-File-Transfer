@@ -15,25 +15,29 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ServerFile extends Thread{
 
-    Context context;
+    private Context context;
     private String TAG = "FILE SERVER";
+    private String receiverIPAddress;//
     private ListView messageList;
     private ArrayList<Message> messageArray;
     private ChatAdapter messageAdapter;
     private int myPort;
 
     ServerFile(Context context, ChatAdapter messageAdapter, ListView messageList,
-               ArrayList<Message> messageArray, int myPort) {
+               ArrayList<Message> messageArray, int myPort, String receiverIPAddress) {
 
         this.context = context;
         this.messageAdapter = messageAdapter;
         this.messageList = messageList;
         this.messageArray = messageArray;
         this.myPort = myPort;
+        this.receiverIPAddress = receiverIPAddress;
     }
 
     public void run() {
@@ -46,7 +50,7 @@ public class ServerFile extends Thread{
 
             System.out.println(TAG + "started");
 
-            while (true) {
+            while (!Thread.interrupted()) {
 
                 Socket connectFileSocket = fileSocket.accept();
 
@@ -55,6 +59,7 @@ public class ServerFile extends Thread{
                 FileFromClient fileFromClient = new FileFromClient();
                 fileFromClient.execute(connectFileSocket);
             }
+            fileSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,6 +86,7 @@ public class ServerFile extends Thread{
 
                     String fileName = dataInputStream.readUTF();
                     File outputFile = new File(testDirectory, fileName);
+                    text = fileName;
 
                     OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
                     long fileSize = dataInputStream.readLong();
@@ -109,7 +115,26 @@ public class ServerFile extends Thread{
         }
 
         protected void onPostExecute(String result) {
+
             Log.d(TAG, "onPostExecute: Result" + result);
+
+            messageArray.add(new Message("New File Received: " + result, 1));
+            messageList.setAdapter(messageAdapter);
+
+            File filepath = context.getObbDir();
+
+            Log.i(TAG, "FilesDir =>" + filepath + "\n");
+
+            String fileName = new SimpleDateFormat("yyyyMMdd").format(new Date()) + "-" + receiverIPAddress + ".txt";
+            File file = new File(filepath, fileName);
+            try {
+
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                String history = "Server received a file from => " + receiverIPAddress + "\n";
+                fileOutputStream.write(history.getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

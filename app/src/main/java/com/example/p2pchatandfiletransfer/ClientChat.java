@@ -3,28 +3,39 @@ package com.example.p2pchatandfiletransfer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.Formatter;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class ClientChat extends Activity {
+public class ClientChat extends AppCompatActivity {
 
     private EditText chatboxMessage;
     private ImageButton sendMessage;
@@ -33,12 +44,12 @@ public class ClientChat extends Activity {
     private int receiverPort;
     private ServerSocket serverSocket;
     private Handler handler = new Handler();
+    private String myIPAddress = "";
     private String receiverIPAddress = "";
     private String TAG = "CLIENT ACTIVITY";
-    private String tempS;
     private ListView messageList;
     private ArrayList<Message> messageArray;
-
+    private Boolean exit = false;
 
     public static ChatAdapter messageAdapter;
 
@@ -70,19 +81,24 @@ public class ClientChat extends Activity {
             myPort = Integer.parseInt(individualInfo[2]);
         }
 
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        myIPAddress = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+
         if (!receiverIPAddress.equals("")) {
 
-            ServerChat serverChat = new ServerChat(getApplicationContext(), messageAdapter, messageList, messageArray, myPort);
+            ServerChat serverChat = new ServerChat(getApplicationContext(), messageAdapter, messageList, messageArray,
+                    myPort, myIPAddress, this, receiverIPAddress);
             serverChat.start();
 
-            ServerFile serverFile = new ServerFile (getApplicationContext(), messageAdapter, messageList, messageArray, myPort);
+            ServerFile serverFile = new ServerFile (getApplicationContext(), messageAdapter, messageList,
+                    messageArray, myPort, receiverIPAddress);
             serverFile.start();
         }
 
         sendMessage.setOnClickListener(v -> {
 
             if (!chatboxMessage.getText().toString().isEmpty()) {
-                User user = new User();
+                User user = new User("1:" + chatboxMessage.getText().toString());
                 user.execute();
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(), "Please write something", Toast.LENGTH_SHORT);
@@ -97,8 +113,14 @@ public class ClientChat extends Activity {
             intent.setType("*/*");
             startActivityForResult(Intent.createChooser(intent, "Select file"), 1);
         });
-
     }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -119,17 +141,27 @@ public class ClientChat extends Activity {
             Log.d(TAG, "onActivityResult: " + arrOfStr.length);
 
             if (arrOfStr.length > 1)
-                new fileTransfer(arrOfStr[1]).execute();
+                new FileTransfer(arrOfStr[1]).execute();
             else
-                new fileTransfer(arrOfStr[0]).execute();
+                new FileTransfer(arrOfStr[0]).execute();
         }
     }
+
+    /*public final void changeBackgroundColor(Integer selectedColor) {
+        LayerDrawable layerDrawable = (LayerDrawable) messageList.getBackground();
+        GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.shapeColor);
+        gradientDrawable.setColor(selectedColor);
+    }*/
 
     @SuppressLint("StaticFieldLeak")
     public class User extends AsyncTask<Void, Void, String> {
 
-        String sentMessage = chatboxMessage.getText().toString();
-        String message = "1:" + sentMessage;
+        String message;
+
+        User(String message) {
+            this.message = message;
+            Log.d(TAG,"message:"+message);
+        }
 
         @Override
         protected String doInBackground(Void... voids) {
@@ -163,27 +195,48 @@ public class ClientChat extends Activity {
             Log.i(TAG, "on post execution result => " + result);
 
             StringBuilder stringBuilder = new StringBuilder(result);
-            stringBuilder.deleteCharAt(0);
-            stringBuilder.deleteCharAt(0);
 
-            result = stringBuilder.toString();
+            if (stringBuilder.charAt(0) == '1' && stringBuilder.charAt(1) == ':') {
 
-            messageArray.add(new Message(result, 0));
-            messageList.setAdapter(messageAdapter);
-            chatboxMessage.setText("");
+                stringBuilder.deleteCharAt(0);
+                stringBuilder.deleteCharAt(0);
+
+                result = stringBuilder.toString();
+
+                File path = getApplicationContext().getObbDir();
+
+                Log.i(TAG, "FilesDir =>" + path + "\n");
+
+                String fileName = new SimpleDateFormat("yyyyMMdd").format(new Date()) + "-" + receiverIPAddress + ".txt";
+
+                File file = new File(path, fileName);
+                try {
+
+                    FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                    String history = "client: " + result + "\n";
+                    fileOutputStream.write(history.getBytes());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                messageArray.add(new Message(result, 0));
+                messageList.setAdapter(messageAdapter);
+                chatboxMessage.setText("");
+            }
         }
     }
 
-    class fileTransfer extends AsyncTask<Void, Integer, Integer> {
+    class FileTransfer extends AsyncTask<Void, Integer, String> {
         String path;
 
-        fileTransfer(String path) {
+        FileTransfer(String path) {
             this.path = path;
         }
 
         @Override
-        protected Integer doInBackground(Void... voids) {
+        protected String doInBackground(Void... voids) {
 
+            String fileName = "";
             String receiverIPAddress = ClientChat.this.receiverIPAddress;
             int receiverPort = ClientChat.this.receiverPort + 1;
 
@@ -208,6 +261,7 @@ public class ClientChat extends Activity {
 
                 long fileSize = file.length();
                 byte[] byteArray = new byte[(int) fileSize];
+                fileName = file.getName();
 
                 DataInputStream dataInputStream = new DataInputStream(fileInputStream);
                 dataInputStream.readFully(byteArray, 0, byteArray.length);
@@ -231,7 +285,43 @@ public class ClientChat extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return fileName;
+        }
+
+        @Override
+        protected void onPostExecute(String name) {
+            Log.d(TAG, "onPostExecute: " + name);
+            File filepath = getApplicationContext().getObbDir();
+            Log.i(TAG, "FilesDir =>" + filepath + "\n");
+            String fileName = new SimpleDateFormat("yyyyMMdd").format(new Date()) + "-" + receiverIPAddress + ".txt";
+            File file = new File(filepath, fileName);
+            try {
+                FileOutputStream fos = new FileOutputStream(file, true);
+                String history = "client sent a file from => " + path + "\n";
+                fos.write(history.getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (!name.isEmpty()) {
+                messageArray.add(new Message("New File Sent: " + name, 0));
+                messageList.setAdapter(messageAdapter);
+                chatboxMessage.setText("");
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "File cannot be sent. No Internet Connection", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+
+            Toast.makeText(this, "Press Back again to Exit.", Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(() -> exit = false, 3 * 1000);
         }
     }
 }
