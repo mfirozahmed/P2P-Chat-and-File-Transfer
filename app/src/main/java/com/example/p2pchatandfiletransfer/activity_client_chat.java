@@ -1,9 +1,7 @@
 package com.example.p2pchatandfiletransfer;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -26,8 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.flask.colorpicker.ColorPickerView;
-import com.flask.colorpicker.OnColorSelectedListener;
-import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 import java.io.DataInputStream;
@@ -44,7 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ClientChat extends AppCompatActivity {
+public class activity_client_chat extends AppCompatActivity {
 
     private EditText chatboxMessage;
     private ImageButton sendMessage;
@@ -143,7 +139,7 @@ public class ClientChat extends AppCompatActivity {
         // Handle change background
         switch (item.getItemId()) {
             case R.id.action_settings: {
-                final Context context = ClientChat.this;
+                final Context context = activity_client_chat.this;
                 ColorPickerDialogBuilder
                         .with(context)
                         .setTitle("Choose a color")
@@ -176,12 +172,14 @@ public class ClientChat extends AppCompatActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        String path;
+        String path, path2;
 
         if (requestCode == 1) {
 
             Uri txtUri = data.getData();
             path = txtUri.getPath();
+
+            //path2 = data.getData().
 
             Log.d(TAG, "onActivityResult: " + path);
 
@@ -216,8 +214,8 @@ public class ClientChat extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             try {
 
-                String receiverIPAddress = ClientChat.this.receiverIPAddress;
-                int receiverPort = ClientChat.this.receiverPort;
+                String receiverIPAddress = activity_client_chat.this.receiverIPAddress;
+                int receiverPort = activity_client_chat.this.receiverPort;
 
                 Socket clientSocket = new Socket(receiverIPAddress, receiverPort);
                 OutputStream outToServer = clientSocket.getOutputStream();
@@ -286,8 +284,8 @@ public class ClientChat extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
 
             String fileName = "";
-            String receiverIPAddress = ClientChat.this.receiverIPAddress;
-            int receiverPort = ClientChat.this.receiverPort + 1;
+            String receiverIPAddress = activity_client_chat.this.receiverIPAddress;
+            int receiverPort = activity_client_chat.this.receiverPort + 1;
 
             try {
 
