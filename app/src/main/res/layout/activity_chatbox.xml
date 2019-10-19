@@ -35,7 +35,7 @@
         android:id="@+id/messageList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/back_main"
+        android:background="@drawable/background"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

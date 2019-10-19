@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -133,6 +134,8 @@ public class ServerChat extends Thread {
                 LayerDrawable layerDrawable = (LayerDrawable) message_List.getBackground();
                 GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.shapeColor);
                 gradientDrawable.setColor(Color.parseColor("#" + result));
+
+                Toast.makeText(context, "Changed Background Color", Toast.LENGTH_SHORT).show();
             }
         }
     }

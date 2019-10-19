@@ -138,26 +138,27 @@ public class activity_client_chat extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle change background
         switch (item.getItemId()) {
-            case R.id.action_settings: {
+            case R.id.save_message: {
+                Toast.makeText(this, "Message saved ", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            case R.id.change_background: {
                 final Context context = activity_client_chat.this;
                 ColorPickerDialogBuilder
                         .with(context)
-                        .setTitle("Choose a color")
+                        .setTitle("Choose color")
                         .initialColor(0xffffffff)
                         .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                         .density(12)
                         .setOnColorSelectedListener(selectedColor -> {
                         })
-                        .setPositiveButton("Ok", (dialog, selectedColor, allColors) -> {
-
+                        .setPositiveButton("ok", (dialog, selectedColor, allColors) -> {
                             changeBackgroundColor(selectedColor);
-
                             User user = new User("2:" + Integer.toHexString(selectedColor));
                             user.execute();
-
                             Log.d("ColorPicker", "onColorChanged: 0x" + Integer.toHexString(selectedColor));
                         })
-                        .setNegativeButton("Cancel", (dialog, which) -> {
+                        .setNegativeButton("cancel", (dialog, which) -> {
                         })
                         .build()
                         .show();
@@ -196,8 +197,13 @@ public class activity_client_chat extends AppCompatActivity {
 
     public final void changeBackgroundColor(Integer selectedColor) {
         LayerDrawable layerDrawable = (LayerDrawable) messageList.getBackground();
+
+        Log.d(TAG, "BG color: got");
+
         GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.shapeColor);
         gradientDrawable.setColor(selectedColor);
+
+        Toast.makeText(this, "Background Color changed", Toast.LENGTH_SHORT).show();
     }
 
     @SuppressLint("StaticFieldLeak")
